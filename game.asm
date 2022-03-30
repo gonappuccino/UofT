@@ -119,13 +119,14 @@ main_loop:
 
 update: 	beq $s1, $s0, same
 		jal clear
-
+		
+		
 same:		jal char
 		
 		#lw $t8, 0($t9)
 		
 		li $v0, 32
-		li $a0, 305
+		li $a0, 400
 		syscall
 
 		
@@ -154,29 +155,27 @@ clear:		# s1 = location of character to erase
 		li $t2, COL_BLA
 		
 
-		sw $t2, -260($s1)
-
-		sw $t2, -256($s1)
-
-		sw $t2, -252($s1)
+		#sw $t2, -260($s1)
+		#sw $t2, -256($s1)
+		#sw $t2, -252($s1)	
+		#sw $t2, -248($s1)	
+		#sw $t2, -244($s1)	
+		#sw $t2, -240($s1)
+		#sw $t2, -512($s1)
+		#sw $t2, -508($s1)
+		#sw $t2, -504($s1)
+		#sw $t2, -500($s1)
 		
-		sw $t2, -248($s1)
-		
-		sw $t2, -244($s1)
-		
-		sw $t2, -240($s1)
-		sw $t2, -512($s1)
-		sw $t2, -508($s1)
-		sw $t2, -504($s1)
-		sw $t2, -500($s1)
 		sw $t2, 4($s1)
 		sw $t2, 8($s1)
 		sw $t2, 256($s1)
 		sw $t2, 260($s1)
 		sw $t2, 264($s1)
 		sw $t2, 268($s1)
+		sw $t2, 512($s1)
 		sw $t2, 516($s1)
 		sw $t2, 520($s1)
+		sw $t2, 524($s1)
 		sw $t2, 768($s1)
 		sw $t2, 780($s1)
 		
