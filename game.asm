@@ -1,11 +1,13 @@
-##################################################################### #
-# CSCB58 Winter 2022 Assembly Final Project
 # University of Toronto, Scarborough
 #
 # Student: Name, Student Number, UTorID, official email #
 # Gon Yang, 1007128243, yanggon, gon.yang@mail.utoronto.ca
 
 # Bitmap Display Configuration:
+# - Unit width in pixels: 4 (update this as needed)
+# - Unit height in pixels: 4 (update this as needed)
+# - Display width in pixels: 256 (update this as needed)
+# - Display height in pixels: 256 (update this as needed) # - Base Address for Display: 0x10008000 ($gp)
 # - Unit width in pixels: 8 (update this as needed)
 # - Unit height in pixels: 8 (update this as needed)
 # - Display width in pixels: 512 (update this as needed)
@@ -21,15 +23,10 @@
 # Which approved features have been implemented for milestone 3?
 # (See the assignment handout for the list of additional features) # 1. (fill in the feature, if any)
 # 2. (fill in the feature, if any)
-# 3. (fill in the feature, if any)
-# ... (add more if necessary)
-#
-# Link to video demonstration for final submission:
-# - (insert YouTube / MyMedia / other URL here). Make sure we can view it! #
-# Are you OK with us sharing the video with people outside course staff?
 # - yes / no / yes, and please share this project github link as well! #
 # Any additional information that the TA needs to know:
 # - (write here, if any)
+# #####################################################################
 # #####################################################################
 
 
@@ -62,6 +59,7 @@
 #li $a0, 5
 #syscall
 
+
 .data
 
 END:  .word   1
@@ -69,6 +67,7 @@ END:  .word   1
 .globl main
 main: 		li $s0, DIS_LAND_START_CHAR
 		li $s1, BASE_ADDRESS
+		addi $s1, $s1, 256
 		addi $s1, $s1, 256
 		li $t0, BASE_ADDRESS
 		addi $t1, $t0, 252
@@ -107,6 +106,24 @@ update: 	beq $s1, $s0, same
 		jal clear
 
 same:		jal char
+		
+		lw $t8, 0($t9)
+		
+		li $v0, 32
+		li $a0, 305
+		syscall
+		
+
+		
+		lw $t1, 0($t9)
+		add $t8, $t8, $t1
+		bnez $t8, main_loop
+		
+		jal clear
+		
+		jal s
+		jal char
+		
 		j main_loop
 		
 clear_dis:	la $t0, BASE_ADDRESS
@@ -120,6 +137,14 @@ clear_dis_end:  jr $ra
 		
 clear:		# s1 = location of character to erase
 		li $t2, COL_BLA
+		sw $t2, -256($s1)
+		sw $t2, -252($s1)
+		sw $t2, -248($s1)
+		sw $t2, -244($s1)
+		sw $t2, -512($s1)
+		sw $t2, -508($s1)
+		sw $t2, -504($s1)
+		sw $t2, -500($s1)
 		sw $t2, 4($s1)
 		sw $t2, 8($s1)
 		sw $t2, 256($s1)
@@ -266,4 +291,4 @@ aid:		# t0 = location of aid
 		sw $t2, 256($t0)
 		sw $t2, 260($t0)
 		
-		j end		
+		j end
