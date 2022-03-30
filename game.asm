@@ -1,3 +1,5 @@
+##################################################################### #
+# CSCB58 Winter 2022 Assembly Final Project
 # University of Toronto, Scarborough
 #
 # Student: Name, Student Number, UTorID, official email #
@@ -23,6 +25,12 @@
 # Which approved features have been implemented for milestone 3?
 # (See the assignment handout for the list of additional features) # 1. (fill in the feature, if any)
 # 2. (fill in the feature, if any)
+# 3. (fill in the feature, if any)
+# ... (add more if necessary)
+#
+# Link to video demonstration for final submission:
+# - (insert YouTube / MyMedia / other URL here). Make sure we can view it! #
+# Are you OK with us sharing the video with people outside course staff?
 # - yes / no / yes, and please share this project github link as well! #
 # Any additional information that the TA needs to know:
 # - (write here, if any)
@@ -48,6 +56,7 @@
 .eqv  COL_BRW,  0x00663300  # brown
 .eqv  COL_ORA,  0x00ff9966  # orange
 .eqv  COL_GRE,  0x00669900  # green
+.eqv  COL_DGR,  0x000F4618  # dark green
 .eqv  COL_BLU,  0x000066ff  # blue
 .eqv  COL_YEL,  0x00ffff00  # yellow
 .eqv  COL_WHI,  0x00ffffff  # white
@@ -67,8 +76,7 @@ END:  .word   1
 .globl main
 main: 		li $s0, DIS_LAND_START_CHAR
 		li $s1, BASE_ADDRESS
-		addi $s1, $s1, 256
-		addi $s1, $s1, 256
+		addi $s1, $s1, 1024
 		li $t0, BASE_ADDRESS
 		addi $t1, $t0, 252
 		li $t2, COL_BLU
@@ -84,6 +92,13 @@ main: 		li $s0, DIS_LAND_START_CHAR
 		li $t2, COL_BRW
 		
 		jal fill
+		
+		# the height of platform should be like this no odds
+		li $t0, DIS_LAND_START_CHAR
+		subi $t0, $t0, 2304
+		addi $t0, $t0, 160
+		
+		jal platform
 main_loop:
 		# t0 = init location
 		# t1 = end location
@@ -107,20 +122,20 @@ update: 	beq $s1, $s0, same
 
 same:		jal char
 		
-		lw $t8, 0($t9)
+		#lw $t8, 0($t9)
 		
 		li $v0, 32
 		li $a0, 305
 		syscall
-		
 
 		
-		lw $t1, 0($t9)
-		add $t8, $t8, $t1
+		#lw $t1, 0($t9)
+		#add $t8, $t8, $t1
 		bnez $t8, main_loop
 		
 		jal clear
 		
+		#remove it
 		jal s
 		jal char
 		
@@ -137,10 +152,19 @@ clear_dis_end:  jr $ra
 		
 clear:		# s1 = location of character to erase
 		li $t2, COL_BLA
+		
+
+		sw $t2, -260($s1)
+
 		sw $t2, -256($s1)
+
 		sw $t2, -252($s1)
+		
 		sw $t2, -248($s1)
+		
 		sw $t2, -244($s1)
+		
+		sw $t2, -240($s1)
 		sw $t2, -512($s1)
 		sw $t2, -508($s1)
 		sw $t2, -504($s1)
@@ -172,6 +196,21 @@ a:		#left
 		div $s0, $t3  # divide by width
 		mfhi $t4  # remainder
 		beq $t4, $zero, end
+		
+		lw $t3, -260($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, -4($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 252($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 508($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 764($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1020($s0)
+		beq $t3, COL_DGR, end
+		
+		
 		move $s1, $s0
 		addi $s0, $s0, -8
 		j end
@@ -181,6 +220,21 @@ w:		#jump
 		addi $t3, $t3, WIDTH
 		addi $t3, $t3, WIDTH
 		blt $s0, $t3, end
+		
+		lw $t3, -260($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, -256($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, -252($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, -248($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, -244($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, -240($s0)
+		beq $t3, COL_DGR, end
+		
+		
 		move $s1, $s0
 		subi $s0, $s0, WIDTH
 		subi $s0, $s0, WIDTH
@@ -192,6 +246,20 @@ d:		#right
 		mfhi $t4
 		subi $t3, $t3, 16
 		beq $t4, $t3, end 
+		
+		lw $t3, -240($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 16($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 272($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 528($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 784($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1040($s0)
+		beq $t3, COL_DGR, end
+		
 		move $s1, $s0
 		addi $s0, $s0, 8
 		j end
@@ -207,6 +275,33 @@ s:		#down
 		addi $t3, $t3, -WIDTH
 		addi $t3, $t3, -WIDTH
 		blt $t3, $s0, end
+		
+		lw $t3, 1020($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1024($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1028($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1032($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1036($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1040($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1276($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1280($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1284($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1288($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1292($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, 1296($s0)
+		beq $t3, COL_DGR, end
+		
+		
 		move $s1, $s0
 		addi $s0, $s0, WIDTH
 		addi $s0, $s0, WIDTH
@@ -237,7 +332,26 @@ fill_end:       sw $t2, 0($t0)
 		jr $ra
 		
 platform:	# t0 = start point
-		li $t2, COL_GRE
+		
+		li $t2, COL_DGR
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 8($t0)
+		sw $t2, 12($t0)
+		sw $t2, 16($t0)
+		sw $t2, 20($t0)
+		sw $t2, 24($t0)
+		sw $t2, 28($t0)	
+		sw $t2, 32($t0)
+		sw $t2, 36($t0)	
+		sw $t2, 40($t0)	
+		sw $t2, 44($t0)	
+		sw $t2, 48($t0)
+		sw $t2, 52($t0)	
+		sw $t2, 56($t0)
+		
+		addi $t0, $t0, -WIDTH
+		li $t2, COL_BRW
 		sw $t2, 0($t0)
 		sw $t2, 4($t0)
 		sw $t2, 8($t0)
@@ -291,4 +405,5 @@ aid:		# t0 = location of aid
 		sw $t2, 256($t0)
 		sw $t2, 260($t0)
 		
+		j end		
 		j end
