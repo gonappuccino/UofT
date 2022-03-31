@@ -68,6 +68,9 @@
 #li $a0, 5
 #syscall
 
+#question!!!!!!!1===========================
+#there is invisible edge on the platform is that ok?
+
 
 .data
 
@@ -95,10 +98,26 @@ main: 		li $s0, DIS_LAND_START_CHAR
 		
 		# the height of platform should be like this no odds
 		li $t0, DIS_LAND_START_CHAR
-		subi $t0, $t0, 2304
-		addi $t0, $t0, 160
+		subi $t0, $t0, 2304    # divisible by 256
+		addi $t0, $t0, 160    # divisible by 4, < 256
 		
 		jal platform
+		
+		
+		li $t0, DIS_LAND_START_CHAR
+		subi $t0, $t0, 4096 
+		addi $t0, $t0, 88  
+		
+		jal platform
+		
+		li $t0, DIS_LAND_START_CHAR
+		subi $t0, $t0, 7424
+		addi $t0, $t0, 24
+		
+		jal platform
+		
+		
+		
 main_loop:
 		# t0 = init location
 		# t1 = end location
@@ -126,7 +145,7 @@ same:		jal char
 		#lw $t8, 0($t9)
 		
 		li $v0, 32
-		li $a0, 400
+		li $a0, 700
 		syscall
 
 		
@@ -192,17 +211,22 @@ clear_5:	lw $t3, -512($s1)
 		beq $t3, COL_BRW, clear_6
 		sw $t2, -512($s1)
 		
-clear_6:	lw $t3, -504($s1)
+clear_6:	lw $t3, -508($s1)
 		beq $t3, COL_DGR, clear_7
 		beq $t3, COL_BRW, clear_7
-		sw $t2, -504($s1)
+		sw $t2, -508($s1)	
 		
-clear_7:	lw $t3, -500($s1)
+clear_7:	lw $t3, -504($s1)
 		beq $t3, COL_DGR, clear_8
 		beq $t3, COL_BRW, clear_8
+		sw $t2, -504($s1)
+		
+clear_8:	lw $t3, -500($s1)
+		beq $t3, COL_DGR, clear_9
+		beq $t3, COL_BRW, clear_9
 		sw $t2, -500($s1)
 		
-clear_8:	sw $t2, 4($s1)
+clear_9:	sw $t2, 4($s1)
 		sw $t2, 8($s1)
 		sw $t2, 256($s1)
 		sw $t2, 260($s1)
@@ -247,7 +271,7 @@ a:		#left
 		
 		
 		move $s1, $s0
-		addi $s0, $s0, -8
+		addi $s0, $s0, -4
 		j end
 		
 w:		#jump
@@ -256,6 +280,18 @@ w:		#jump
 		addi $t3, $t3, WIDTH
 		blt $s0, $t3, end
 		
+		lw $t3, -516($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, -512($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, -508($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, -504($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, -500($s0)
+		beq $t3, COL_DGR, end
+		lw $t3, -496($s0)
+		beq $t3, COL_DGR, end
 		lw $t3, -260($s0)
 		beq $t3, COL_DGR, end
 		lw $t3, -256($s0)
@@ -272,7 +308,7 @@ w:		#jump
 		
 		move $s1, $s0
 		subi $s0, $s0, WIDTH
-		subi $s0, $s0, WIDTH
+		#subi $s0, $s0, WIDTH
 		j end
 
 d:		#right
@@ -296,7 +332,7 @@ d:		#right
 		beq $t3, COL_DGR, end
 		
 		move $s1, $s0
-		addi $s0, $s0, 8
+		addi $s0, $s0, 4
 		j end
 
 s:		#down
@@ -339,10 +375,12 @@ s:		#down
 		
 		move $s1, $s0
 		addi $s0, $s0, WIDTH
-		addi $s0, $s0, WIDTH
+		#addi $s0, $s0, WIDTH
 		j end
 
 p:		#end and restart
+		move $s1, $s0
+		jal clear
 		la $ra, main
 		j end
 		
@@ -383,7 +421,7 @@ platform:	# t0 = start point
 		sw $t2, 44($t0)	
 		sw $t2, 48($t0)
 		sw $t2, 52($t0)	
-		sw $t2, 56($t0)
+
 		
 		addi $t0, $t0, -WIDTH
 		li $t2, COL_BRW
@@ -401,7 +439,7 @@ platform:	# t0 = start point
 		sw $t2, 44($t0)	
 		sw $t2, 48($t0)
 		sw $t2, 52($t0)	
-		sw $t2, 56($t0)	
+	
 		
 		j end
 
