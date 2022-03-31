@@ -158,51 +158,51 @@ clear:		# s1 = location of character to erase
 		# problem
 		
 		lw $t3, -260($s1)
-		beq $t3, COL_DGR, end
-		beq $t3, COL_BRW, end
+		beq $t3, COL_DGR, clear_0
+		beq $t3, COL_BRW, clear_0
 		sw $t2, -260($s1)
 		
-		lw $t3, -256($s1)
-		beq $t3, COL_DGR, end
-		beq $t3, COL_BRW, end
+clear_0:	lw $t3, -256($s1)
+		beq $t3, COL_DGR, clear_1
+		beq $t3, COL_BRW, clear_1
 		sw $t2, -256($s1)
 		
-		lw $t3, -252($s1)
-		beq $t3, COL_DGR, end
-		beq $t3, COL_BRW, end
+clear_1:	lw $t3, -252($s1)
+		beq $t3, COL_DGR, clear_2
+		beq $t3, COL_BRW, clear_2
 		sw $t2, -252($s1)
 		
-		lw $t3, -248($s1)
-		beq $t3, COL_DGR, end
-		beq $t3, COL_BRW, end	
+clear_2:	lw $t3, -248($s1)
+		beq $t3, COL_DGR, clear_3
+		beq $t3, COL_BRW, clear_3
 		sw $t2, -248($s1)
 		
-		lw $t3, -244($s1)
-		beq $t3, COL_DGR, end
-		beq $t3, COL_BRW, end		
+clear_3:	lw $t3, -244($s1)
+		beq $t3, COL_DGR, clear_4
+		beq $t3, COL_BRW, clear_4		
 		sw $t2, -244($s1)
 		
-		lw $t3, -240($s1)
-		beq $t3, COL_DGR, end
-		beq $t3, COL_BRW, end	
+clear_4:	lw $t3, -240($s1)
+		beq $t3, COL_DGR, clear_5
+		beq $t3, COL_BRW, clear_5	
 		sw $t2, -240($s1)
 		
-		lw $t3, -512($s1)
-		beq $t3, COL_DGR, end
-		beq $t3, COL_BRW, end
+clear_5:	lw $t3, -512($s1)
+		beq $t3, COL_DGR, clear_6
+		beq $t3, COL_BRW, clear_6
 		sw $t2, -512($s1)
 		
-		lw $t3, -504($s1)
-		beq $t3, COL_DGR, end
-		beq $t3, COL_BRW, end
+clear_6:	lw $t3, -504($s1)
+		beq $t3, COL_DGR, clear_7
+		beq $t3, COL_BRW, clear_7
 		sw $t2, -504($s1)
 		
-		lw $t3, -500($s1)
-		beq $t3, COL_DGR, end
-		beq $t3, COL_BRW, end
+clear_7:	lw $t3, -500($s1)
+		beq $t3, COL_DGR, clear_8
+		beq $t3, COL_BRW, clear_8
 		sw $t2, -500($s1)
 		
-		sw $t2, 4($s1)
+clear_8:	sw $t2, 4($s1)
 		sw $t2, 8($s1)
 		sw $t2, 256($s1)
 		sw $t2, 260($s1)
