@@ -226,8 +226,10 @@ clear_8:	lw $t3, -500($s1)
 		beq $t3, COL_BRW, clear_9
 		sw $t2, -500($s1)
 		
-clear_9:	sw $t2, 4($s1)
+clear_9:	sw $t2, 0($s1)
+		sw $t2, 4($s1)
 		sw $t2, 8($s1)
+		sw $t2, 12($s1)
 		sw $t2, 256($s1)
 		sw $t2, 260($s1)
 		sw $t2, 264($s1)
@@ -280,20 +282,7 @@ w:		#jump
 		addi $t3, $t3, WIDTH
 		blt $s0, $t3, end
 		
-		lw $t3, -516($s0)
-		beq $t3, COL_DGR, end
-		lw $t3, -512($s0)
-		beq $t3, COL_DGR, end
-		lw $t3, -508($s0)
-		beq $t3, COL_DGR, end
-		lw $t3, -504($s0)
-		beq $t3, COL_DGR, end
-		lw $t3, -500($s0)
-		beq $t3, COL_DGR, end
-		lw $t3, -496($s0)
-		beq $t3, COL_DGR, end
-		lw $t3, -260($s0)
-		beq $t3, COL_DGR, end
+
 		lw $t3, -256($s0)
 		beq $t3, COL_DGR, end
 		lw $t3, -252($s0)
@@ -302,13 +291,12 @@ w:		#jump
 		beq $t3, COL_DGR, end
 		lw $t3, -244($s0)
 		beq $t3, COL_DGR, end
-		lw $t3, -240($s0)
-		beq $t3, COL_DGR, end
+		
 		
 		
 		move $s1, $s0
 		subi $s0, $s0, WIDTH
-		#subi $s0, $s0, WIDTH
+		
 		j end
 
 d:		#right
@@ -347,8 +335,7 @@ s:		#down
 		addi $t3, $t3, -WIDTH
 		blt $t3, $s0, end
 		
-		lw $t3, 1020($s0)
-		beq $t3, COL_DGR, end
+		
 		lw $t3, 1024($s0)
 		beq $t3, COL_DGR, end
 		lw $t3, 1028($s0)
@@ -357,10 +344,9 @@ s:		#down
 		beq $t3, COL_DGR, end
 		lw $t3, 1036($s0)
 		beq $t3, COL_DGR, end
-		lw $t3, 1040($s0)
-		beq $t3, COL_DGR, end
-		lw $t3, 1276($s0)
-		beq $t3, COL_DGR, end
+		
+		
+		
 		lw $t3, 1280($s0)
 		beq $t3, COL_DGR, end
 		lw $t3, 1284($s0)
@@ -369,13 +355,12 @@ s:		#down
 		beq $t3, COL_DGR, end
 		lw $t3, 1292($s0)
 		beq $t3, COL_DGR, end
-		lw $t3, 1296($s0)
-		beq $t3, COL_DGR, end
+		
 		
 		
 		move $s1, $s0
 		addi $s0, $s0, WIDTH
-		#addi $s0, $s0, WIDTH
+		
 		j end
 
 p:		#end and restart
