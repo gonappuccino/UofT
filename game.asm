@@ -377,6 +377,26 @@ a:		#left
 		mfhi $t4  # remainder
 		beq $t4, $zero, end
 		
+		li $t2, COL_BLA
+		sw $t2, 768($s0)
+		sw $t2, 780($s0)
+		
+		li $t2, COL_GRE
+		sw $t2, 772($s0)
+		sw $t2, 776($s0)
+		
+		li $v0, 32
+		li $a0, 300
+		syscall
+		
+		li $t2, COL_BLA
+		sw $t2, 772($s0)
+		sw $t2, 776($s0)
+		
+		li $t2, COL_GRE
+		sw $t2, 768($s0)
+		sw $t2, 780($s0)
+		
 		#lw $t3, -260($s0)
 		#beq $t3, COL_DGR, end
 		lw $t3, -4($s0)
@@ -418,6 +438,7 @@ w:		#jump
 		addi $t3, $t3, WIDTH
 		blt $s0, $t3, end
 		
+		
 
 		lw $t3, -256($s0)
 		beq $t3, COL_DGR, end
@@ -435,6 +456,26 @@ w:		#jump
 		beq $t3, COL_DGR, end
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
+		
+		li $t2, COL_BLA
+		sw $t2, 256($s0)
+		sw $t2, 268($s0)
+		
+		li $t2, COL_GRE
+		sw $t2, 0($s0)
+		sw $t2, 12($s0)
+		
+		li $v0, 32
+		li $a0, 300
+		syscall
+		
+		li $t2, COL_BLA
+		sw $t2, 0($s0)
+		sw $t2, 12($s0)
+		
+		li $t2, COL_GRE
+		sw $t2, 256($s0)
+		sw $t2, 268($s0)
 
 
 		move $s1, $s0
@@ -448,6 +489,28 @@ d:		#right
 		mfhi $t4
 		subi $t3, $t3, 16
 		beq $t4, $t3, end 
+		
+		li $t2, COL_BLA
+		sw $t2, 768($s0)
+		sw $t2, 780($s0)
+		
+		li $t2, COL_GRE
+		sw $t2, 772($s0)
+		sw $t2, 776($s0)
+		
+		li $v0, 32
+		li $a0, 300
+		syscall
+		
+		li $t2, COL_BLA
+		sw $t2, 772($s0)
+		sw $t2, 776($s0)
+		
+		li $t2, COL_GRE
+		sw $t2, 768($s0)
+		sw $t2, 780($s0)
+		
+		
 		
 		#lw $t3, -240($s0)
 		#beq $t3, COL_DGR, end
