@@ -1,4 +1,4 @@
-##################################################################### #
+######################################################################
 # CSCB58 Winter 2022 Assembly Final Project
 # University of Toronto, Scarborough
 #
@@ -179,51 +179,61 @@ clear:		# s1 = location of character to erase
 		lw $t3, -260($s1)
 		beq $t3, COL_DGR, clear_0
 		beq $t3, COL_BRW, clear_0
+		beq $t3, COL_BLU, clear_0
 		sw $t2, -260($s1)
 		
 clear_0:	lw $t3, -256($s1)
 		beq $t3, COL_DGR, clear_1
 		beq $t3, COL_BRW, clear_1
+		beq $t3, COL_BLU, clear_1
 		sw $t2, -256($s1)
 		
 clear_1:	lw $t3, -252($s1)
 		beq $t3, COL_DGR, clear_2
 		beq $t3, COL_BRW, clear_2
+		beq $t3, COL_BLU, clear_2
 		sw $t2, -252($s1)
 		
 clear_2:	lw $t3, -248($s1)
 		beq $t3, COL_DGR, clear_3
 		beq $t3, COL_BRW, clear_3
+		beq $t3, COL_BLU, clear_3
 		sw $t2, -248($s1)
 		
 clear_3:	lw $t3, -244($s1)
 		beq $t3, COL_DGR, clear_4
-		beq $t3, COL_BRW, clear_4		
+		beq $t3, COL_BRW, clear_4
+		beq $t3, COL_BLU, clear_4		
 		sw $t2, -244($s1)
 		
 clear_4:	lw $t3, -240($s1)
 		beq $t3, COL_DGR, clear_5
-		beq $t3, COL_BRW, clear_5	
+		beq $t3, COL_BRW, clear_5
+		beq $t3, COL_BLU, clear_5	
 		sw $t2, -240($s1)
 		
 clear_5:	lw $t3, -512($s1)
 		beq $t3, COL_DGR, clear_6
 		beq $t3, COL_BRW, clear_6
+		beq $t3, COL_BLU, clear_6
 		sw $t2, -512($s1)
 		
 clear_6:	lw $t3, -508($s1)
 		beq $t3, COL_DGR, clear_7
 		beq $t3, COL_BRW, clear_7
+		beq $t3, COL_BLU, clear_7
 		sw $t2, -508($s1)	
 		
 clear_7:	lw $t3, -504($s1)
 		beq $t3, COL_DGR, clear_8
 		beq $t3, COL_BRW, clear_8
+		beq $t3, COL_BLU, clear_8
 		sw $t2, -504($s1)
 		
 clear_8:	lw $t3, -500($s1)
 		beq $t3, COL_DGR, clear_9
 		beq $t3, COL_BRW, clear_9
+		beq $t3, COL_BLU, clear_9
 		sw $t2, -500($s1)
 		
 clear_9:	sw $t2, 0($s1)
@@ -258,8 +268,8 @@ a:		#left
 		mfhi $t4  # remainder
 		beq $t4, $zero, end
 		
-		lw $t3, -260($s0)
-		beq $t3, COL_DGR, end
+		#lw $t3, -260($s0)
+		#beq $t3, COL_DGR, end
 		lw $t3, -4($s0)
 		beq $t3, COL_DGR, end
 		lw $t3, 252($s0)
@@ -268,8 +278,8 @@ a:		#left
 		beq $t3, COL_DGR, end
 		lw $t3, 764($s0)
 		beq $t3, COL_DGR, end
-		lw $t3, 1020($s0)
-		beq $t3, COL_DGR, end
+		#lw $t3, 1020($s0)
+		#beq $t3, COL_DGR, end
 		
 		
 		move $s1, $s0
@@ -291,9 +301,8 @@ w:		#jump
 		beq $t3, COL_DGR, end
 		lw $t3, -244($s0)
 		beq $t3, COL_DGR, end
-		
-		
-		
+
+
 		move $s1, $s0
 		subi $s0, $s0, WIDTH
 		
@@ -306,8 +315,8 @@ d:		#right
 		subi $t3, $t3, 16
 		beq $t4, $t3, end 
 		
-		lw $t3, -240($s0)
-		beq $t3, COL_DGR, end
+		#lw $t3, -240($s0)
+		#beq $t3, COL_DGR, end
 		lw $t3, 16($s0)
 		beq $t3, COL_DGR, end
 		lw $t3, 272($s0)
@@ -316,8 +325,8 @@ d:		#right
 		beq $t3, COL_DGR, end
 		lw $t3, 784($s0)
 		beq $t3, COL_DGR, end
-		lw $t3, 1040($s0)
-		beq $t3, COL_DGR, end
+		#lw $t3, 1040($s0)
+		#beq $t3, COL_DGR, end
 		
 		move $s1, $s0
 		addi $s0, $s0, 4
@@ -325,7 +334,6 @@ d:		#right
 
 s:		#down
 		li $t3, DIS_BR
-		addi $t3, $t3, -WIDTH
 		addi $t3, $t3, -WIDTH
 		addi $t3, $t3, -WIDTH
 		addi $t3, $t3, -WIDTH
@@ -464,4 +472,3 @@ aid:		# t0 = location of aid
 		sw $t2, 260($t0)
 		
 		j end		
-		j end
