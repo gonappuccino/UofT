@@ -39,8 +39,7 @@
 
 
 # constant
-.eqv  BASE_ADDRESS    0x10008000
-.eqv  
+.eqv  BASE_ADDRESS    0x10008000 
 .eqv  DIS_BR	      0x1000BFFC    
 .eqv  DIS_BL          0x1000BF00
 .eqv  DIS_LAND_START_CHAR  0x1000B900
@@ -78,12 +77,43 @@ life:  .word    3
 END:  .word   1
 .text
 .globl main
-main: 		li $s0, DIS_LAND_START_CHAR
+main: 		
+		li $t0, BASE_ADDRESS
+		li $t1, DIS_BR
+		li $t2, COL_BLA
+		
+		
+		jal fill
+		
+
+		li $s0, DIS_LAND_START_CHAR
+		
+		li $t6, BASE_ADDRESS
+		addi $t6, $t6, 512
+		addi $t6, $t6, 8
+
+		#
+		#
+		# character start point change
+		#subi $s0, $s0, 6144
+		#subi $s0, $s0, 2048
+		
+		
+		
+		
+		##
 		li $s1, BASE_ADDRESS
 		addi $s1, $s1, 1024
+		addi $s1, $s1, 1024
+		
 		li $t0, BASE_ADDRESS
 		addi $t1, $t0, 252
 		li $t2, COL_BLU
+		jal fill
+		
+		li $t0, BASE_ADDRESS
+		addi $t0, $t0, 1280
+		addi $t1, $t0, 252
 		jal fill
 		
 		li $t0, DIS_LAND_START_CHAR
@@ -121,11 +151,30 @@ main: 		li $s0, DIS_LAND_START_CHAR
 		addi $t0, $t0, 512
 		addi $t0, $t0, 32
 		
+		
 		li $t2, COL_RED
+		sw $t2, -12($t0)
+		sw $t2, -8($t0)
+		sw $t2, 244($t0)
+		sw $t2, 248($t0)
+		
+		li $t2, COL_LGR
 		sw $t2, 0($t0)
 		sw $t2, 4($t0)
 		sw $t2, 256($t0)
 		sw $t2, 260($t0)
+		
+		li $t2, COL_RED
+		sw $t2, 20($t0)
+		sw $t2, 24($t0)
+		sw $t2, 276($t0)
+		sw $t2, 280($t0)
+		
+		li $t2, COL_RED
+		sw $t2, 40($t0)
+		sw $t2, 44($t0)
+		sw $t2, 296($t0)
+		sw $t2, 300($t0)
 		
 		
 main_loop:
@@ -135,8 +184,31 @@ main_loop:
 		# t3 = temp
 		# t4 = temp
 		# t5 = life (3)
-		la $t5, life
-		lw $t5, 0($t5)
+		# t6 = life location on the display
+		la $t3, life
+		lw $t5, 0($t3)
+		bge $t5, 3, max_three
+		j after_max
+max_three:	addi $t5, $zero, 3
+	
+after_max:
+		#draw life
+		#
+		jal draw_life
+		
+		beq $t5, $zero, game_end
+		#
+		#
+		#
+		#
+		#
+		#
+		#
+		#
+		#
+		#
+		#
+		#jal life
 		
 		li $v0, 1
 		move $a0, $t5
@@ -337,6 +409,11 @@ a:		#left
 		
 w:		#jump
 		li $t3, BASE_ADDRESS
+		addi $t3, $t3, WIDTH
+		addi $t3, $t3, WIDTH
+		addi $t3, $t3, WIDTH
+		addi $t3, $t3, WIDTH
+		addi $t3, $t3, WIDTH
 		addi $t3, $t3, WIDTH
 		addi $t3, $t3, WIDTH
 		blt $s0, $t3, end
@@ -769,9 +846,25 @@ ac18:		li $t2, COL_BLA
 		
 ac19:		li $t2, COL_BLA
 		lw $t3, 1296($s0)
-		bne $t3, COL_LGR, ac_end
+		bne $t3, COL_LGR, ac20
 		sw $t2, 1296($s0)
-				
+
+ac20:		li $t2, COL_BLA
+		lw $t3, 1016($s0)
+		bne $t3, COL_LGR, ac21
+		sw $t2, 1016($s0)
+		
+ac21:		li $t2, COL_BLA
+		lw $t3, 1040($s0)
+		bne $t3, COL_LGR, ac22
+		sw $t2, 1040($s0)
+
+ac22:		li $t2, COL_BLA
+		lw $t3, 1044($s0)
+		bne $t3, COL_LGR, ac_end
+		sw $t2, 1044($s0)
+
+		
 ac_end:
 		
 		j end
@@ -912,9 +1005,127 @@ mc18:		li $t2, COL_BLA
 		
 mc19:		li $t2, COL_BLA
 		lw $t3, 1296($s0)
-		bne $t3, COL_RED, mc_end
+		bne $t3, COL_RED, mc20
 		sw $t2, 1296($s0)
+		
+mc20:		li $t2, COL_BLA
+		lw $t3, 1016($s0)
+		bne $t3, COL_RED, mc21
+		sw $t2, 1016($s0)
+		
+mc21:		li $t2, COL_BLA
+		lw $t3, 1040($s0)
+		bne $t3, COL_RED, mc22
+		sw $t2, 1040($s0)
+
+mc22:		li $t2, COL_BLA
+		lw $t3, 1044($s0)
+		bne $t3, COL_RED, mc_end
+		sw $t2, 1044($s0)
 				
 mc_end:
 		
 		j end
+		
+		
+		
+draw_life:  	beq $t5, 3, life_three
+		beq $t5, 2, life_two
+		beq $t5, 1, life_one
+		beq $t5, 0, life_zero
+	
+		
+life_zero:    	li $t2, COL_BLA
+		sw $t2, 0($t6)
+		sw $t2, 8($t6)
+		sw $t2, 260($t6)
+		sw $t2, 16($t6)
+		sw $t2, 24($t6)
+		sw $t2, 276($t6)
+		sw $t2, 32($t6)
+		sw $t2, 40($t6)
+		sw $t2, 292($t6)
+		
+		j life_end
+life_one: 	
+		li $t2, COL_BLA
+		sw $t2, 16($t6)
+		sw $t2, 24($t6)
+		sw $t2, 276($t6)
+		sw $t2, 32($t6)
+		sw $t2, 40($t6)
+		sw $t2, 292($t6)
+		
+		li $t2, COL_RED
+		sw $t2, 0($t6)
+		sw $t2, 8($t6)
+		sw $t2, 260($t6)
+		j life_end
+		
+life_two:	li $t2, COL_BLA
+		sw $t2, 32($t6)
+		sw $t2, 40($t6)
+		sw $t2, 292($t6)
+		
+		li $t2, COL_RED
+		sw $t2, 0($t6)
+		sw $t2, 8($t6)
+		sw $t2, 260($t6)
+		sw $t2, 16($t6)
+		sw $t2, 24($t6)
+		sw $t2, 276($t6)
+		j life_end
+		
+life_three:	li $t2, COL_RED
+		sw $t2, 0($t6)
+		sw $t2, 8($t6)
+		sw $t2, 260($t6)
+		sw $t2, 16($t6)
+		sw $t2, 24($t6)
+		sw $t2, 276($t6)
+		sw $t2, 32($t6)
+		sw $t2, 40($t6)
+		sw $t2, 292($t6)
+		j life_end
+		
+life_end:	j end
+
+
+game_end:	li $t0, BASE_ADDRESS
+		li $t1, DIS_BR
+		li $t2, COL_BLA
+		
+		
+		
+		jal fill
+		
+		
+		
+		# have to be changed to GAME OVER not just E
+		
+		li $v0, 1
+		li $a0, 999
+		syscall 
+		
+		li $t0, BASE_ADDRESS
+		
+		li $t2, COL_YEL
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 8($t0)
+		sw $t2, 12($t0)
+		sw $t2, 256($t0)
+		sw $t2, 512($t0)
+		sw $t2, 516($t0)
+		sw $t2, 520($t0)
+		sw $t2, 524($t0)
+		sw $t2, 768($t0)
+		sw $t2, 1024($t0)
+		sw $t2, 1028($t0)
+		sw $t2, 1032($t0)
+		sw $t2, 1036($t0)
+		
+		j exit
+		
+		
+		
