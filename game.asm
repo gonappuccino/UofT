@@ -54,6 +54,7 @@
 # colours 
 .eqv  COL_RED,  0x00ff0000  # red
 .eqv  COL_BRW,  0x00663300  # brown
+.eqv  COL_LGR,  0x0013D7A9  #light green
 .eqv  COL_ORA,  0x00ff9966  # orange
 .eqv  COL_GRE,  0x00669900  # green
 .eqv  COL_DGR,  0x000F4618  # dark green
@@ -101,7 +102,7 @@ main: 		li $s0, DIS_LAND_START_CHAR
 		subi $t0, $t0, 2304    # divisible by 256
 		addi $t0, $t0, 160    # divisible by 4, < 256
 		
-		jal platform
+		jal aid_platform
 		
 		
 		li $t0, DIS_LAND_START_CHAR
@@ -114,8 +115,16 @@ main: 		li $s0, DIS_LAND_START_CHAR
 		subi $t0, $t0, 7424
 		addi $t0, $t0, 24
 		
-		jal platform
+		jal mine_platform
 		
+		li $t0, DIS_LAND_START_CHAR
+		addi $t0, $t0, 512
+		addi $t0, $t0, 32
+		li $t2, COL_RED
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 256($t0)
+		sw $t2, 260($t0)
 		
 		
 main_loop:
@@ -180,60 +189,80 @@ clear:		# s1 = location of character to erase
 		beq $t3, COL_DGR, clear_0
 		beq $t3, COL_BRW, clear_0
 		beq $t3, COL_BLU, clear_0
+		#beq $t3, COL_LGR, clear_0
+		#beq $t3, COL_RED, clear_0
 		sw $t2, -260($s1)
 		
 clear_0:	lw $t3, -256($s1)
 		beq $t3, COL_DGR, clear_1
 		beq $t3, COL_BRW, clear_1
 		beq $t3, COL_BLU, clear_1
+		#beq $t3, COL_LGR, clear_1
+		#beq $t3, COL_RED, clear_1
 		sw $t2, -256($s1)
 		
 clear_1:	lw $t3, -252($s1)
 		beq $t3, COL_DGR, clear_2
 		beq $t3, COL_BRW, clear_2
 		beq $t3, COL_BLU, clear_2
+		#beq $t3, COL_LGR, clear_2
+		#beq $t3, COL_RED, clear_2
 		sw $t2, -252($s1)
 		
 clear_2:	lw $t3, -248($s1)
 		beq $t3, COL_DGR, clear_3
 		beq $t3, COL_BRW, clear_3
 		beq $t3, COL_BLU, clear_3
+		#beq $t3, COL_LGR, clear_3
+		#beq $t3, COL_RED, clear_3
 		sw $t2, -248($s1)
 		
 clear_3:	lw $t3, -244($s1)
 		beq $t3, COL_DGR, clear_4
 		beq $t3, COL_BRW, clear_4
-		beq $t3, COL_BLU, clear_4		
+		beq $t3, COL_BLU, clear_4
+		#beq $t3, COL_LGR, clear_4
+		#beq $t3, COL_RED, clear_4		
 		sw $t2, -244($s1)
 		
 clear_4:	lw $t3, -240($s1)
 		beq $t3, COL_DGR, clear_5
 		beq $t3, COL_BRW, clear_5
-		beq $t3, COL_BLU, clear_5	
+		beq $t3, COL_BLU, clear_5
+		#beq $t3, COL_LGR, clear_5
+		#beq $t3, COL_RED, clear_5	
 		sw $t2, -240($s1)
 		
 clear_5:	lw $t3, -512($s1)
 		beq $t3, COL_DGR, clear_6
 		beq $t3, COL_BRW, clear_6
 		beq $t3, COL_BLU, clear_6
+		#beq $t3, COL_LGR, clear_6
+		#beq $t3, COL_RED, clear_6
 		sw $t2, -512($s1)
 		
 clear_6:	lw $t3, -508($s1)
 		beq $t3, COL_DGR, clear_7
 		beq $t3, COL_BRW, clear_7
 		beq $t3, COL_BLU, clear_7
+		#beq $t3, COL_LGR, clear_7
+		#beq $t3, COL_RED, clear_7
 		sw $t2, -508($s1)	
 		
 clear_7:	lw $t3, -504($s1)
 		beq $t3, COL_DGR, clear_8
 		beq $t3, COL_BRW, clear_8
 		beq $t3, COL_BLU, clear_8
+		#beq $t3, COL_LGR, clear_8
+		#beq $t3, COL_RED, clear_8
 		sw $t2, -504($s1)
 		
 clear_8:	lw $t3, -500($s1)
 		beq $t3, COL_DGR, clear_9
 		beq $t3, COL_BRW, clear_9
 		beq $t3, COL_BLU, clear_9
+		#beq $t3, COL_LGR, clear_9
+		#beq $t3, COL_RED, clear_9
 		sw $t2, -500($s1)
 		
 clear_9:	sw $t2, 0($s1)
@@ -272,14 +301,26 @@ a:		#left
 		#beq $t3, COL_DGR, end
 		lw $t3, -4($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 252($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 508($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 764($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		#lw $t3, 1020($s0)
 		#beq $t3, COL_DGR, end
+		
+		lw $t3, 762($s0)
+
+		
 		
 		
 		move $s1, $s0
@@ -295,12 +336,20 @@ w:		#jump
 
 		lw $t3, -256($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, -252($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, -248($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, -244($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 
 
 		move $s1, $s0
@@ -319,14 +368,25 @@ d:		#right
 		#beq $t3, COL_DGR, end
 		lw $t3, 16($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 272($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 528($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 784($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		#lw $t3, 1040($s0)
 		#beq $t3, COL_DGR, end
+		
+		#lw $t3, 788($s0)
+		
 		
 		move $s1, $s0
 		addi $s0, $s0, 4
@@ -346,24 +406,47 @@ s:		#down
 		
 		lw $t3, 1024($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 1028($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 1032($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 1036($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		
 		
 		
 		lw $t3, 1280($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 1284($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 1288($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		lw $t3, 1292($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_LGR, end
+		beq $t3, COL_RED, end
 		
+		lw $t3, 1024($s0)
+		
+		lw $t3, 1028($s0)
+		
+		lw $t3, 1032($s0)
+		
+		lw $t3, 1036($s0)
 		
 		
 		move $s1, $s0
@@ -435,6 +518,99 @@ platform:	# t0 = start point
 	
 		
 		j end
+		
+aid_platform:   li $t2, COL_DGR
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 8($t0)
+		sw $t2, 12($t0)
+		sw $t2, 16($t0)
+		sw $t2, 20($t0)
+		sw $t2, 24($t0)
+		sw $t2, 28($t0)	
+		sw $t2, 32($t0)
+		sw $t2, 36($t0)	
+		sw $t2, 40($t0)	
+		sw $t2, 44($t0)	
+		sw $t2, 48($t0)
+		sw $t2, 52($t0)	
+
+		
+		addi $t0, $t0, -WIDTH
+		li $t2, COL_BRW
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 8($t0)
+		sw $t2, 12($t0)
+		sw $t2, 16($t0)
+		sw $t2, 20($t0)
+		sw $t2, 24($t0)
+		sw $t2, 28($t0)	
+		sw $t2, 32($t0)
+		sw $t2, 36($t0)	
+		sw $t2, 40($t0)	
+		sw $t2, 44($t0)	
+		sw $t2, 48($t0)
+		sw $t2, 52($t0)	
+		
+		addi $t0, $t0, -WIDTH
+		addi $t0, $t0, -WIDTH
+		addi $t0, $t0, 32
+		
+		li $t2, COL_LGR
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 256($t0)
+		sw $t2, 260($t0)
+		
+		j end
+		
+		
+mine_platform:   li $t2, COL_DGR
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 8($t0)
+		sw $t2, 12($t0)
+		sw $t2, 16($t0)
+		sw $t2, 20($t0)
+		sw $t2, 24($t0)
+		sw $t2, 28($t0)	
+		sw $t2, 32($t0)
+		sw $t2, 36($t0)	
+		sw $t2, 40($t0)	
+		sw $t2, 44($t0)	
+		sw $t2, 48($t0)
+		sw $t2, 52($t0)	
+
+		
+		addi $t0, $t0, -WIDTH
+		li $t2, COL_BRW
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 8($t0)
+		sw $t2, 12($t0)
+		sw $t2, 16($t0)
+		sw $t2, 20($t0)
+		sw $t2, 24($t0)
+		sw $t2, 28($t0)	
+		sw $t2, 32($t0)
+		sw $t2, 36($t0)	
+		sw $t2, 40($t0)	
+		sw $t2, 44($t0)	
+		sw $t2, 48($t0)
+		sw $t2, 52($t0)	
+		
+		addi $t0, $t0, -WIDTH
+		addi $t0, $t0, -WIDTH
+		addi $t0, $t0, 16
+		
+		li $t2, COL_RED
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 256($t0)
+		sw $t2, 260($t0)
+		
+		j end
 
 char:		# s0 = location of character
 		li $t2, COL_ORA
@@ -451,24 +627,32 @@ char:		# s0 = location of character
 		sw $t2, 780($s0)
 		
 		j end	
-		 
-mine:		# t0 = location of object   # is it big enough?
-		li $t2, COL_YEL
-		sw $t2, 4($t0)
+
+aid_collision:li $t2, COL_LGR
+		sw $t2, 4($s0)
+		sw $t2, 8($s0)
+		sw $t2, 256($s0)
+		sw $t2, 260($s0)
+		sw $t2, 264($s0)
+		sw $t2, 268($s0)
+		sw $t2, 516($s0)
+		sw $t2, 520($s0)
+		sw $t2, 768($s0)
+		sw $t2, 780($s0)
 		
-		li $t2, COL_RED
-		sw $t2, 256($t0)
-		sw $t2, 264($t0)
+		li $v0, 32
+		li $a0, 500
+		syscall
 		
-		j end
-		
-aid:		# t0 = location of aid
-		li $t2, COL_WHI
-		sw $t2, 0($t0)
-		sw $t2, 4($t0)
-		
-		li $t2, COL_BLU
-		sw $t2, 256($t0)
-		sw $t2, 260($t0)
-		
-		j end		
+		li $t2, COL_ORA
+		sw $t2, 4($s0)
+		sw $t2, 8($s0)
+		li $t2, COL_GRE
+		sw $t2, 256($s0)
+		sw $t2, 260($s0)
+		sw $t2, 264($s0)
+		sw $t2, 268($s0)
+		sw $t2, 516($s0)
+		sw $t2, 520($s0)
+		sw $t2, 768($s0)
+		sw $t2, 780($s0)
