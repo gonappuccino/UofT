@@ -38,6 +38,16 @@
 # #####################################################################
 
 
+
+#question
+
+#when we win or fail can i just finish the program?
+
+
+
+
+
+
 # constant
 .eqv  BASE_ADDRESS    0x10008000 
 .eqv  DIS_BR	      0x1000BFFC    
@@ -182,6 +192,24 @@ main:
 		sw $t2, 296($t0)
 		sw $t2, 300($t0)
 		
+		li $t2, COL_YEL
+		li $t0, BASE_ADDRESS
+		addi $t0, $t0, 2048
+		addi $t0, $t0, 2048
+		addi $t0, $t0, 240
+		
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 8($t0)
+		sw $t2, 256($t0)
+		sw $t2, 260($t0)
+		sw $t2, 264($t0)
+		sw $t2, 512($t0)
+		sw $t2, 516($t0)
+		sw $t2, 520($t0)
+		sw $t2, 768($t0)
+		sw $t2, 772($t0)
+		sw $t2, 776($t0)
 		
 main_loop:
 		# t0 = init location
@@ -475,21 +503,25 @@ a:		#left
 		#beq $t3, COL_DGR, end
 		lw $t3, -4($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		lw $t3, 252($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		lw $t3, 508($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 764($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
@@ -520,18 +552,22 @@ w:		#jump
 
 		lw $t3, -256($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		lw $t3, -252($s0)
 		beq $t3, COL_DGR, end
 		beq $t3, COL_LGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_RED, end
 		lw $t3, -248($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		lw $t3, -244($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		
@@ -594,21 +630,25 @@ d:		#right
 		#beq $t3, COL_DGR, end
 		lw $t3, 16($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		lw $t3, 272($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		lw $t3, 528($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 784($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
@@ -635,18 +675,22 @@ s:		#down
 		
 		lw $t3, 1024($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 1028($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 1032($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 1036($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_YEL, win
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		
@@ -1306,7 +1350,42 @@ game_end:	li $t0, BASE_ADDRESS
 		sw $t2, 1032($t0)
 		sw $t2, 1036($t0)
 		
-		j exit
+		li $v0, 32
+		li $a0, 2000
+		syscall
 		
+		j exit
+
+win:		li $t0, BASE_ADDRESS
+		li $t1, DIS_BR
+		li $t2, COL_BLA
+		
+		
+		
+		jal fill
+		
+		li $t0, BASE_ADDRESS
+		
+		li $t2, COL_RED
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 8($t0)
+		sw $t2, 12($t0)
+		sw $t2, 256($t0)
+		sw $t2, 512($t0)
+		sw $t2, 516($t0)
+		sw $t2, 520($t0)
+		sw $t2, 524($t0)
+		sw $t2, 768($t0)
+		sw $t2, 1024($t0)
+		sw $t2, 1028($t0)
+		sw $t2, 1032($t0)
+		sw $t2, 1036($t0)
+		
+		li $v0, 32
+		li $a0, 2000
+		syscall
+		
+		j exit	
 		
 		
