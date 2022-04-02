@@ -1,11 +1,3 @@
-#platform location
-#and fill the below
-
-
-
-
-
-
 ######################################################################
 # CSCB58 Winter 2022 Assembly Final Project
 # University of Toronto, Scarborough
@@ -14,10 +6,6 @@
 # Gon Yang, 1007128243, yanggon, gon.yang@mail.utoronto.ca
 
 # Bitmap Display Configuration:
-# - Unit width in pixels: 4 (update this as needed)
-# - Unit height in pixels: 4 (update this as needed)
-# - Display width in pixels: 256 (update this as needed)
-# - Display height in pixels: 256 (update this as needed) # - Base Address for Display: 0x10008000 ($gp)
 # - Unit width in pixels: 8 (update this as needed)
 # - Unit height in pixels: 8 (update this as needed)
 # - Display width in pixels: 512 (update this as needed)
@@ -26,9 +14,9 @@
 # Which milestones have been reached in this submission?
 # (See the assignment handout for descriptions of the milestones) # - Milestone 1/2/3 (choose the one the applies)
 #
-# - Milestone 1 ()
-# - Milestone 2 ()
-#- Milestone 3 ()
+# - Milestone 1 (O)
+# - Milestone 2 (O)
+#- Milestone 3 (O)
 #
 # Which approved features have been implemented for milestone 3?
 # (See the assignment handout for the list of additional features) # 1. (fill in the feature, if any)
@@ -38,10 +26,13 @@
 #
 # Link to video demonstration for final submission:
 # - (insert YouTube / MyMedia / other URL here). Make sure we can view it! #
+
 # Are you OK with us sharing the video with people outside course staff?
 # - yes / no / yes, and please share this project github link as well! #
+
 # Any additional information that the TA needs to know:
 # - (write here, if any)
+
 # #####################################################################
 # #####################################################################
 
@@ -50,7 +41,7 @@
 #question
 
 #when we win or fail can i just finish the program?
-
+#type a or d then  char is not gonna fall is that ok
 
 
 
@@ -90,8 +81,6 @@
 
 .data
 
-life:  .word    3
-
 END:  .word   1
 .text
 .globl main
@@ -99,7 +88,6 @@ main:
 		li $t0, BASE_ADDRESS
 		li $t1, DIS_BR
 		li $t2, COL_BLA
-		
 		
 		jal fill
 		
@@ -118,7 +106,7 @@ main:
 		subi $s0, $s0, 1024
 		
 		li $t7, 0
-		
+		li $t5, 3
 		li $s5, 0
 		##
 		li $s1, BASE_ADDRESS
@@ -205,7 +193,8 @@ main:
 		li $t0, BASE_ADDRESS
 		addi $t0, $t0, 2048
 		addi $t0, $t0, 2048
-		addi $t0, $t0, 240
+		addi $t0, $t0, 236
+		subi $t0, $t0, 256
 		
 		sw $t2, 0($t0)
 		sw $t2, 4($t0)
@@ -220,6 +209,19 @@ main:
 		sw $t2, 772($t0)
 		sw $t2, 776($t0)
 		
+		li $t2, COL_BRW
+		sw $t2, 1020($t0)
+		sw $t2, 1036($t0)
+		sw $t2, 1024($t0)
+		sw $t2, 1028($t0)
+		sw $t2, 1032($t0)
+		
+		li $t2, COL_DGR
+		sw $t2, 1276($t0)
+		sw $t2, 1280($t0)
+		sw $t2, 1284($t0)
+		sw $t2, 1288($t0)
+		sw $t2, 1292($t0)
 main_loop:
 		# t0 = init location
 		# t1 = end location
@@ -294,8 +296,7 @@ move_right:	li $t2, COL_BLA
 		
 		j moving_end
 moving_end:
-		la $t3, life
-		lw $t5, 0($t3)
+		
 		bge $t5, 3, max_three
 		j after_max
 max_three:	addi $t5, $zero, 3
@@ -346,7 +347,7 @@ same:		jal char
 		#lw $t8, 0($t9)
 		
 		li $v0, 32
-		li $a0, 700
+		li $a0, 75
 		syscall
 
 		
@@ -363,7 +364,9 @@ same:		jal char
 flying:		subi $s5, $s5, 1
 		j draw_c
 		
-gravity:	jal s
+gravity:
+		
+		jal s
 		
 draw_c:		
 		
@@ -511,7 +514,7 @@ a:		#left
 		sw $t2, 776($s0)
 		
 		li $v0, 32
-		li $a0, 300
+		li $a0, 40
 		syscall
 		
 		li $t2, COL_BLA
@@ -596,6 +599,8 @@ w:		#jump
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		
+
+		
 		li $t2, COL_BLA
 		sw $t2, 256($s0)
 		sw $t2, 268($s0)
@@ -605,7 +610,7 @@ w:		#jump
 		sw $t2, 12($s0)
 		
 		li $v0, 32
-		li $a0, 300
+		li $a0, 40
 		syscall
 		
 		li $t2, COL_BLA
@@ -638,7 +643,7 @@ d:		#right
 		sw $t2, 776($s0)
 		
 		li $v0, 32
-		li $a0, 300
+		li $a0, 40
 		syscall
 		
 		li $t2, COL_BLA
@@ -972,10 +977,8 @@ char:		# s0 = location of character
 		j end	
 
 aid_collision:	
-		la $t3, life
-		lw $t5, 0($t3)
+		
 		addi $t5, $t5, 1
-		sw $t5, 0($t3)
 		
 		
 		li $t2, COL_LGR
@@ -1131,10 +1134,8 @@ ac_end:
 #mine collision
 		
 mine_collision:	
-		la $t3, life
-		lw $t5, 0($t3)
+
 		addi $t5, $t5, -1
-		sw $t5, 0($t3)
 		
 		
 		li $t2, COL_RED
@@ -1288,7 +1289,7 @@ mc_end:
 		
 jump_collision: #can fly for 10 movement
 		
-		addi $s5, $zero, 10
+		addi $s5, $zero, 40
 		
 		li $t2, COL_PUR
 		sw $t2, 4($s0)
@@ -1508,38 +1509,152 @@ game_end:	li $t0, BASE_ADDRESS
 		li $t1, DIS_BR
 		li $t2, COL_BLA
 		
-		
-		
+
 		jal fill
-		
-		
-		
-		# have to be changed to GAME OVER not just E
+
  
 		
 		li $t0, BASE_ADDRESS
-		
-		li $t2, COL_YEL
+		addi $t0, $t0, 2048
+		addi $t0, $t0, 2048
+		addi $t0, $t0, 2048
+		addi $t0, $t0, 88
+		li $t2, COL_WHI
 		sw $t2, 0($t0)
 		sw $t2, 4($t0)
 		sw $t2, 8($t0)
 		sw $t2, 12($t0)
+		sw $t2, 16($t0)
+		sw $t2, 24($t0)
+		sw $t2, 28($t0)
+		sw $t2, 32($t0)
+		sw $t2, 36($t0)
+		sw $t2, 40($t0)
+		sw $t2, 48($t0)
+		sw $t2, 52($t0)
+		sw $t2, 56($t0)
+		sw $t2, 60($t0)
+		sw $t2, 64($t0)
+		sw $t2, 72($t0)
+		sw $t2, 76($t0)
+		sw $t2, 80($t0)
+		sw $t2, 84($t0)
+		sw $t2, 88($t0)
 		sw $t2, 256($t0)
+		sw $t2, 280($t0)
+		sw $t2, 296($t0)
+		sw $t2, 304($t0)
+		sw $t2, 312($t0)
+		sw $t2, 320($t0)
+		sw $t2, 328($t0)
 		sw $t2, 512($t0)
-		sw $t2, 516($t0)
 		sw $t2, 520($t0)
 		sw $t2, 524($t0)
+		sw $t2, 528($t0)
+		sw $t2, 536($t0)
+		sw $t2, 540($t0)
+		sw $t2, 544($t0)
+		sw $t2, 548($t0)
+		sw $t2, 552($t0)
+		sw $t2, 560($t0)
+		sw $t2, 568($t0)
+		sw $t2, 576($t0)
+		sw $t2, 584($t0)
+		sw $t2, 588($t0)
+		sw $t2, 592($t0)
+		sw $t2, 596($t0)
+		sw $t2, 600($t0)
 		sw $t2, 768($t0)
+		sw $t2, 784($t0)
+		sw $t2, 792($t0)
+		sw $t2, 808($t0)
+		sw $t2, 816($t0)
+		sw $t2, 824($t0)
+		sw $t2, 832($t0)
+		sw $t2, 840($t0)
 		sw $t2, 1024($t0)
 		sw $t2, 1028($t0)
 		sw $t2, 1032($t0)
 		sw $t2, 1036($t0)
+		sw $t2, 1040($t0)
+		sw $t2, 1048($t0)
+		sw $t2, 1064($t0)
+		sw $t2, 1072($t0)
+		sw $t2, 1080($t0)
+		sw $t2, 1088($t0)
+		sw $t2, 1096($t0)
+		sw $t2, 1100($t0)
+		sw $t2, 1104($t0)
+		sw $t2, 1108($t0)
+		sw $t2, 1112($t0)
+		
+		addi $t0, $t0, 1536		
 		
 		li $v0, 32
-		li $a0, 2000
+		li $a0, 1000
 		syscall
 		
-		j exit
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 8($t0)
+		sw $t2, 12($t0)
+		sw $t2, 16($t0)
+		sw $t2, 24($t0)
+		sw $t2, 40($t0)
+		sw $t2, 48($t0)
+		sw $t2, 52($t0)
+		sw $t2, 56($t0)
+		sw $t2, 60($t0)
+		sw $t2, 64($t0)
+		sw $t2, 72($t0)
+		sw $t2, 76($t0)
+		sw $t2, 80($t0)
+		sw $t2, 84($t0)
+		sw $t2, 88($t0)
+		sw $t2, 256($t0)
+		sw $t2, 272($t0)
+		sw $t2, 280($t0)
+		sw $t2, 296($t0)
+		sw $t2, 304($t0)
+		sw $t2, 328($t0)
+		sw $t2, 344($t0)
+		sw $t2, 512($t0)
+		sw $t2, 528($t0)
+		sw $t2, 536($t0)
+		sw $t2, 552($t0)
+		sw $t2, 560($t0)
+		sw $t2, 564($t0)
+		sw $t2, 568($t0)
+		sw $t2, 572($t0)
+		sw $t2, 576($t0)
+		sw $t2, 584($t0)
+		sw $t2, 588($t0)
+		sw $t2, 592($t0)
+		sw $t2, 596($t0)
+		sw $t2, 600($t0)		
+		sw $t2, 768($t0)
+		sw $t2, 784($t0)
+		sw $t2, 796($t0)
+		sw $t2, 804($t0)
+		sw $t2, 816($t0)
+		sw $t2, 840($t0)
+		sw $t2, 848($t0)
+		sw $t2, 1024($t0)
+		sw $t2, 1028($t0)
+		sw $t2, 1032($t0)
+		sw $t2, 1036($t0)
+		sw $t2, 1040($t0)
+		sw $t2, 1056($t0)
+		sw $t2, 1072($t0)
+		sw $t2, 1076($t0)
+		sw $t2, 1080($t0)
+		sw $t2, 1084($t0)
+		sw $t2, 1088($t0)
+		sw $t2, 1096($t0)
+		sw $t2, 1108($t0)
+		sw $t2, 1112($t0)
+		
+		j main
 
 win:		li $t0, BASE_ADDRESS
 		li $t1, DIS_BR
@@ -1550,27 +1665,47 @@ win:		li $t0, BASE_ADDRESS
 		jal fill
 		
 		li $t0, BASE_ADDRESS
+		addi $t0, $t0, 104
+		addi $t0, $t0, 2048
+		addi $t0, $t0, 2048
+		addi $t0, $t0, 2048
+		addi $t0, $t0, 1024
 		
-		li $t2, COL_RED
+		li $t2, COL_YEL
 		sw $t2, 0($t0)
-		sw $t2, 4($t0)
 		sw $t2, 8($t0)
-		sw $t2, 12($t0)
+		sw $t2, 16($t0)
+		sw $t2, 24($t0)
+		sw $t2, 28($t0)
+		sw $t2, 32($t0)
+		sw $t2, 40($t0)
+		sw $t2, 52($t0)
 		sw $t2, 256($t0)
+		sw $t2, 264($t0)
+		sw $t2, 272($t0)
+		sw $t2, 284($t0)
+		sw $t2, 296($t0)
+		sw $t2, 300($t0)
+		sw $t2, 308($t0)
 		sw $t2, 512($t0)
-		sw $t2, 516($t0)
 		sw $t2, 520($t0)
-		sw $t2, 524($t0)
-		sw $t2, 768($t0)
-		sw $t2, 1024($t0)
-		sw $t2, 1028($t0)
-		sw $t2, 1032($t0)
-		sw $t2, 1036($t0)
+		sw $t2, 528($t0)
+		sw $t2, 540($t0)
+		sw $t2, 552($t0)
+		sw $t2, 560($t0)
+		sw $t2, 564($t0)
+		sw $t2, 772($t0)
+		sw $t2, 780($t0)
+		sw $t2, 792($t0)
+		sw $t2, 796($t0)
+		sw $t2, 800($t0)
+		sw $t2, 808($t0)
+		sw $t2, 820($t0)
 		
 		li $v0, 32
 		li $a0, 2000
 		syscall
 		
-		j exit	
+		j main	
 		
 		
