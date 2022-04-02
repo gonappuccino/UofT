@@ -43,7 +43,8 @@
 .eqv  DIS_BR	      0x1000BFFC    
 .eqv  DIS_BL          0x1000BF00
 .eqv  DIS_LAND_START_CHAR  0x1000B900
-
+.eqv  LEFT      0x100095C4
+.eqv  RIGHT 	0x10009564
 .eqv  WIDTH   256
 
 .eqv CHAR_LOCATION 0x10008000
@@ -66,8 +67,6 @@
 #li $a0, 5
 #syscall
 
-#question!!!!!!!1===========================
-#there is invisible edge on the platform is that ok?
 
 
 .data
@@ -95,10 +94,11 @@ main:
 		#
 		#
 		# character start point change
-		#subi $s0, $s0, 6144
-		#subi $s0, $s0, 2048
+		subi $s0, $s0, 6144
+		subi $s0, $s0, 2048
+		subi $s0, $s0, 1024
 		
-		
+		li $t7, 0
 		
 		
 		##
@@ -140,6 +140,12 @@ main:
 		addi $t0, $t0, 88  
 		
 		jal platform
+		
+		li $t0, BASE_ADDRESS
+		addi $t0, $t0, 5572
+		add $s2, $t0, $zero
+		
+		jal moving_platform
 		
 		li $t0, DIS_LAND_START_CHAR
 		subi $t0, $t0, 7424
@@ -185,6 +191,72 @@ main_loop:
 		# t4 = temp
 		# t5 = life (3)
 		# t6 = life location on the display
+		# t7 = moving direction of moving_platform
+		
+		
+		
+		
+		# s2 = right most
+		beq $s2, LEFT, r_most
+		beq $s2, RIGHT, l_most
+		j moving
+
+r_most:	
+		li $t7, 0   #go to the left
+		j moving
+l_most:
+		li $t7, 1  #go to the right
+		j moving
+		
+moving:		beq $t7, 0, move_left
+		j move_right
+		
+move_left:	li $t2, COL_BLA
+
+		#lw $t3,	-260($s2)
+		#beq $t3, COL_GRE, moving_end
+		lw $t3, -4($s2)
+		beq $t3, COL_GRE, moving_end
+		lw $t3, 252($s2)
+		beq $t3, COL_GRE, moving_end
+		lw $t3, 508($s2)
+		beq $t3, COL_GRE, moving_end
+		
+		
+		
+		
+		sw $t2, 48($s2)
+		sw $t2, 52($s2)
+		sw $t2, 304($s2)
+		sw $t2, 308($s2)
+		subi $s2, $s2, 4
+		
+		jal moving_platform
+		
+		j moving_end
+		
+move_right:	li $t2, COL_BLA
+
+		#lw $t3,	-200($s2)
+		#beq $t3, COL_GRE, moving_end
+		lw $t3, 56($s2)
+		beq $t3, COL_GRE, moving_end
+		lw $t3, 312($s2)
+		beq $t3, COL_GRE, moving_end
+		lw $t3, 568($s2)
+		beq $t3, COL_GRE, moving_end
+		
+		sw $t2, 0($s2)
+		sw $t2, 4($s2)
+		sw $t2, 256($s2)
+		sw $t2, 260($s2)
+		addi $s2, $s2, 4
+		
+		jal moving_platform
+
+		
+		j moving_end
+moving_end:
 		la $t3, life
 		lw $t5, 0($t3)
 		bge $t5, 3, max_three
@@ -216,6 +288,8 @@ after_max:
 		
 		# s0 = location of char
 		# s1 = previous location of char (to erase)
+		# s2 = moving platform locaiton
+		# s3 = moving platform previous location
 		
 		li $t9, 0xffff0000
 		lw $t8, 0($t9)
@@ -401,18 +475,22 @@ a:		#left
 		#beq $t3, COL_DGR, end
 		lw $t3, -4($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		lw $t3, 252($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		lw $t3, 508($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 764($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		#lw $t3, 1020($s0)
@@ -516,18 +594,22 @@ d:		#right
 		#beq $t3, COL_DGR, end
 		lw $t3, 16($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		lw $t3, 272($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, end
 		beq $t3, COL_RED, end
 		lw $t3, 528($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 784($s0)
 		beq $t3, COL_DGR, end
+		beq $t3, COL_BRW, end
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		
@@ -572,20 +654,20 @@ s:		#down
 		
 		lw $t3, 1280($s0)
 		beq $t3, COL_DGR, end
-		beq $t3, COL_LGR, aid_collision
-		beq $t3, COL_RED, mine_collision
+		#beq $t3, COL_LGR, aid_collision
+		#beq $t3, COL_RED, mine_collision
 		lw $t3, 1284($s0)
 		beq $t3, COL_DGR, end
-		beq $t3, COL_LGR, aid_collision
-		beq $t3, COL_RED, mine_collision
+		#beq $t3, COL_LGR, aid_collision
+		#beq $t3, COL_RED, mine_collision
 		lw $t3, 1288($s0)
 		beq $t3, COL_DGR, end
-		beq $t3, COL_LGR, aid_collision
-		beq $t3, COL_RED, mine_collision
+		#beq $t3, COL_LGR, aid_collision
+		#beq $t3, COL_RED, mine_collision
 		lw $t3, 1292($s0)
 		beq $t3, COL_DGR, end
-		beq $t3, COL_LGR, aid_collision
-		beq $t3, COL_RED, mine_collision
+		#beq $t3, COL_LGR, aid_collision
+		#beq $t3, COL_RED, mine_collision
 		
 		lw $t3, 1024($s0)
 		
@@ -756,6 +838,45 @@ mine_platform:   li $t2, COL_DGR
 		sw $t2, 4($t0)
 		sw $t2, 256($t0)
 		sw $t2, 260($t0)
+		
+		j end
+		
+moving_platform:
+
+		li $t2, COL_BRW
+		sw $t2, 0($s2)
+		sw $t2, 4($s2)
+		sw $t2, 8($s2)
+		sw $t2, 12($s2)
+		sw $t2, 16($s2)
+		sw $t2, 20($s2)
+		sw $t2, 24($s2)
+		sw $t2, 28($s2)	
+		sw $t2, 32($s2)
+		sw $t2, 36($s2)	
+		sw $t2, 40($s2)	
+		sw $t2, 44($s2)	
+		sw $t2, 48($s2)
+		sw $t2, 52($s2)	
+
+		
+		
+		li $t2, COL_DGR
+		sw $t2, 256($s2)
+		sw $t2, 260($s2)
+		sw $t2, 264($s2)
+		sw $t2, 268($s2)
+		sw $t2, 272($s2)
+		sw $t2, 276($s2)
+		sw $t2, 280($s2)
+		sw $t2, 284($s2)	
+		sw $t2, 288($s2)
+		sw $t2, 292($s2)	
+		sw $t2, 296($s2)	
+		sw $t2, 300($s2)	
+		sw $t2, 304($s2)
+		sw $t2, 308($s2)	
+	
 		
 		j end
 
@@ -1053,7 +1174,7 @@ mc15:		li $t2, COL_BLA
 		
 mc16:		li $t2, COL_BLA
 		lw $t3, 1284($s0)
-		bne $t3, COL_LGR, mc17
+		bne $t3, COL_RED, mc17
 		sw $t2, 1284($s0)
 
 mc17:		li $t2, COL_BLA
@@ -1165,10 +1286,7 @@ game_end:	li $t0, BASE_ADDRESS
 		
 		
 		# have to be changed to GAME OVER not just E
-		
-		li $v0, 1
-		li $a0, 999
-		syscall 
+ 
 		
 		li $t0, BASE_ADDRESS
 		
