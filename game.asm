@@ -1,3 +1,11 @@
+#platform location
+#and fill the below
+
+
+
+
+
+
 ######################################################################
 # CSCB58 Winter 2022 Assembly Final Project
 # University of Toronto, Scarborough
