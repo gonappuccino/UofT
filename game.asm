@@ -61,6 +61,7 @@
  
 # colours 
 .eqv  COL_RED,  0x00ff0000  # red
+.eqv  COL_PUR,  0x009b42f5  #purple
 .eqv  COL_BRW,  0x00663300  # brown
 .eqv  COL_LGR,  0x0013D7A9  #light green
 .eqv  COL_ORA,  0x00ff9966  # orange
@@ -110,7 +111,7 @@ main:
 		
 		li $t7, 0
 		
-		
+		li $s5, 0
 		##
 		li $s1, BASE_ADDRESS
 		addi $s1, $s1, 1024
@@ -174,7 +175,7 @@ main:
 		sw $t2, 244($t0)
 		sw $t2, 248($t0)
 		
-		li $t2, COL_LGR
+		li $t2, COL_PUR
 		sw $t2, 0($t0)
 		sw $t2, 4($t0)
 		sw $t2, 256($t0)
@@ -318,6 +319,7 @@ after_max:
 		# s1 = previous location of char (to erase)
 		# s2 = moving platform locaiton
 		# s3 = moving platform previous location
+		# s4 = fly_sec
 		
 		li $t9, 0xffff0000
 		lw $t8, 0($t9)
@@ -346,9 +348,22 @@ same:		jal char
 		
 		jal clear
 		
-		#remove it
-		jal s
+
+		bnez $s5, flying
+		j gravity
+		
+flying:		subi $s5, $s5, 1
+		j draw_c
+		
+gravity:	jal s
+		
+draw_c:		
+		
 		jal char
+		
+		
+		
+		
 		
 		j main_loop
 		
@@ -517,12 +532,14 @@ a:		#left
 		beq $t3, COL_DGR, end
 		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
+		beq $t3, COL_PUR, jump_collision
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 764($s0)
 		beq $t3, COL_DGR, end
 		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
+		beq $t3, COL_PUR, jump_collision
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		#lw $t3, 1020($s0)
@@ -644,12 +661,14 @@ d:		#right
 		beq $t3, COL_DGR, end
 		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
+		beq $t3, COL_PUR, jump_collision
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 784($s0)
 		beq $t3, COL_DGR, end
 		beq $t3, COL_YEL, win
 		beq $t3, COL_BRW, end
+		beq $t3, COL_PUR, jump_collision
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		
@@ -676,21 +695,25 @@ s:		#down
 		lw $t3, 1024($s0)
 		beq $t3, COL_DGR, end
 		beq $t3, COL_YEL, win
+		beq $t3, COL_PUR, jump_collision
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 1028($s0)
 		beq $t3, COL_DGR, end
 		beq $t3, COL_YEL, win
+		beq $t3, COL_PUR, jump_collision
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 1032($s0)
 		beq $t3, COL_DGR, end
 		beq $t3, COL_YEL, win
+		beq $t3, COL_PUR, jump_collision
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		lw $t3, 1036($s0)
 		beq $t3, COL_DGR, end
 		beq $t3, COL_YEL, win
+		beq $t3, COL_PUR, jump_collision
 		beq $t3, COL_LGR, aid_collision
 		beq $t3, COL_RED, mine_collision
 		
@@ -1252,6 +1275,160 @@ mc22:		li $t2, COL_BLA
 		sw $t2, 1044($s0)
 				
 mc_end:
+		
+		j end
+		
+jump_collision: #can fly for 10 movement
+		
+		addi $s5, $zero, 10
+		
+		li $t2, COL_PUR
+		sw $t2, 4($s0)
+		sw $t2, 8($s0)
+		sw $t2, 256($s0)
+		sw $t2, 260($s0)
+		sw $t2, 264($s0)
+		sw $t2, 268($s0)
+		sw $t2, 516($s0)
+		sw $t2, 520($s0)
+		sw $t2, 768($s0)
+		sw $t2, 780($s0)
+		
+		
+		li $v0, 32
+		li $a0, 650
+		syscall
+		
+		li $t2, COL_ORA
+		sw $t2, 4($s0)
+		sw $t2, 8($s0)
+		li $t2, COL_GRE
+		sw $t2, 256($s0)
+		sw $t2, 260($s0)
+		sw $t2, 264($s0)
+		sw $t2, 268($s0)
+		sw $t2, 516($s0)
+		sw $t2, 520($s0)
+		sw $t2, 768($s0)
+		sw $t2, 780($s0)
+		
+		li $t2, COL_BLA
+		lw $t3, 504($s0)
+		bne $t3, COL_PUR, jc1
+		sw $t2, 504($s0)
+		
+jc1:		li $t2, COL_BLA
+		lw $t3, 508($s0)
+		bne $t3, COL_PUR, jc2
+		sw $t2, 508($s0)
+		
+jc2:		li $t2, COL_BLA
+		lw $t3, 528($s0)
+		bne $t3, COL_PUR, jc3
+		sw $t2, 528($s0)
+
+jc3:		li $t2, COL_BLA
+		lw $t3, 532($s0)
+		bne $t3, COL_PUR, jc4
+		sw $t2, 532($s0)
+
+jc4:		li $t2, COL_BLA
+		lw $t3, 760($s0)
+		bne $t3, COL_PUR, jc5
+		sw $t2, 760($s0)
+		
+jc5:		li $t2, COL_BLA
+		lw $t3, 764($s0)
+		bne $t3, COL_PUR, jc6
+		sw $t2, 764($s0)
+		
+jc6:		li $t2, COL_BLA
+		lw $t3, 784($s0)
+		bne $t3, COL_PUR, jc7
+		sw $t2, 784($s0)
+		
+jc7:		li $t2, COL_BLA
+		lw $t3, 788($s0)
+		bne $t3, COL_PUR, jc8
+		sw $t2, 788($s0)
+		
+jc8:		li $t2, COL_BLA
+		lw $t3, 1020($s0)
+		bne $t3, COL_PUR, jc9
+		sw $t2, 1020($s0)
+		
+jc9:		li $t2, COL_BLA
+		lw $t3, 1024($s0)
+		bne $t3, COL_PUR, jc10
+		sw $t2, 1024($s0)
+		
+jc10:		li $t2, COL_BLA
+		lw $t3, 1028($s0)
+		bne $t3, COL_PUR, jc11
+		sw $t2, 1028($s0)
+		
+jc11:		li $t2, COL_BLA
+		lw $t3, 1032($s0)
+		bne $t3, COL_PUR, jc12
+		sw $t2, 1032($s0)
+		
+jc12:		li $t2, COL_BLA
+		lw $t3, 1036($s0)
+		bne $t3, COL_PUR, jc13
+		sw $t2, 1036($s0)
+		
+jc13:		li $t2, COL_BLA
+		lw $t3, 1040($s0)
+		bne $t3, COL_PUR, jc14
+		sw $t2, 1036($s0)
+
+jc14:		li $t2, COL_BLA
+		lw $t3, 1276($s0)
+		bne $t3, COL_PUR, jc15
+		sw $t2, 1276($s0)
+
+jc15:		li $t2, COL_BLA
+		lw $t3, 1280($s0)
+		bne $t3, COL_PUR, jc16
+		sw $t2, 1280($s0)
+		
+jc16:		li $t2, COL_BLA
+		lw $t3, 1284($s0)
+		bne $t3, COL_PUR, jc17
+		sw $t2, 1284($s0)
+
+jc17:		li $t2, COL_BLA
+		lw $t3, 1288($s0)
+		bne $t3, COL_PUR, jc18
+		sw $t2, 1288($s0)
+		
+jc18:		li $t2, COL_BLA
+		lw $t3, 1292($s0)
+		bne $t3, COL_PUR, jc19
+		sw $t2, 1292($s0)
+		
+jc19:		li $t2, COL_BLA
+		lw $t3, 1296($s0)
+		bne $t3, COL_PUR, jc20
+		sw $t2, 1296($s0)
+
+jc20:		li $t2, COL_BLA
+		lw $t3, 1016($s0)
+		bne $t3, COL_PUR, jc21
+		sw $t2, 1016($s0)
+		
+jc21:		li $t2, COL_BLA
+		lw $t3, 1040($s0)
+		bne $t3, COL_PUR, ac22
+		sw $t2, 1040($s0)
+
+jc22:		li $t2, COL_BLA
+		lw $t3, 1044($s0)
+		bne $t3, COL_PUR, jc_end
+		sw $t2, 1044($s0)
+
+		
+jc_end:
 		
 		j end
 		
