@@ -10,31 +10,65 @@
 # - Unit width in pixels: 8 (update this as needed)
 # - Unit height in pixels: 8 (update this as needed)
 # - Display width in pixels: 512 (update this as needed)
-# - Display height in pixels: 512 (update this as needed) # - Base Address for Display: 0x10008000 ($gp)
+# - Display height in pixels: 512 (update this as needed) 
+# - Base Address for Display: 0x10008000 ($gp)
 #
 # Which milestones have been reached in this submission?
 # (See the assignment handout for descriptions of the milestones) # - Milestone 1/2/3 (choose the one the applies)
 #
-# - Milestone 1 (O)
-# - Milestone 2 (O)
-#- Milestone 3 (O)
+# 	- Milestone 1 (O)
+#       - Milestone 2 (O)
+#	- Milestone 3 (O)
 #
 # Which approved features have been implemented for milestone 3?
 # (See the assignment handout for the list of additional features) 
-# 1. (fill in the feature, if any)
-# 2. (fill in the feature, if any)
-# 3. (fill in the feature, if any)
-# ... (add more if necessary)
+#
+# 1. Health/score [2 marks]
+# 	- 3 lives in the upper left corner of the display
+#	- mine(red) -> -1, aid(blue) -> +1
+# 	- life = 0 -> game over, if life > 3 -> life = 3
+#
+# 2. Fail condition [1 mark]
+#	- life = 0 -> game over 
+#	- show gameover screen(white) and restart the game
+#
+# 3. Win condition [1 mark]
+#	- hit the yellow door -> win the game
+# 	- show win screen(yellow)
+#
+# 4. Moving platforms [2 marks]
+# 	- one of platforms is moving
+#
+# 5. Pick-up effects [2 marks]
+#	- blue pickup -> character's body chnages to blue for a while. life +1
+#	- red pickup -> character's body changes to red for a while. life -1
+#	- purple pickup -> chracter's body changes to purple for a while.
+#		- character can fly for 1.5 sec
+#
+# 6. Animated sprites [2 marks]
+#	- character is animated when walking, moving, and jumping
+#
+#
+#
 #
 # Link to video demonstration for final submission:
 # - (insert YouTube / MyMedia / other URL here). Make sure we can view it! #
-
+#
+#
+#
+#
 # Are you OK with us sharing the video with people outside course staff?
 # - yes / no / yes, and please share this project github link as well! #
-
+#
+#
+#
+#
 # Any additional information that the TA needs to know:
 # - (write here, if any)
-
+#
+#
+#
+#
 # #####################################################################
 # #####################################################################
 
@@ -170,21 +204,16 @@ main:
 		sw $t2, 244($t0)
 		sw $t2, 248($t0)
 		
-		li $t2, COL_RED
-		sw $t2, 0($t0)
-		sw $t2, 4($t0)
-		sw $t2, 256($t0)
-		sw $t2, 260($t0)
-		
-		addi $t0, $t0, 12
-		
-		li $t2, COL_RED
-		sw $t2, 0($t0)
-		sw $t2, 4($t0)
-		sw $t2, 256($t0)
-		sw $t2, 260($t0)
-		
 		addi $t0, $t0, 24
+		li $t2, COL_RED
+		sw $t2, 0($t0)
+		sw $t2, 4($t0)
+		sw $t2, 256($t0)
+		sw $t2, 260($t0)
+		
+
+		
+		addi $t0, $t0, 36
 		
 		li $t2, COL_RED
 		sw $t2, 0($t0)
@@ -192,7 +221,7 @@ main:
 		sw $t2, 256($t0)
 		sw $t2, 260($t0)
 		
-		addi $t0, $t0, 24
+		addi $t0, $t0, 36
 		
 		li $t2, COL_RED
 		sw $t2, 0($t0)
@@ -200,7 +229,7 @@ main:
 		sw $t2, 256($t0)
 		sw $t2, 260($t0)
 		
-		addi $t0, $t0, 24
+		addi $t0, $t0, 36
 		
 		li $t2, COL_RED
 		sw $t2, 0($t0)
@@ -208,7 +237,7 @@ main:
 		sw $t2, 256($t0)
 		sw $t2, 260($t0)
 		
-		addi $t0, $t0, 24
+		addi $t0, $t0, 36
 		
 		li $t2, COL_RED
 		sw $t2, 0($t0)
@@ -216,7 +245,7 @@ main:
 		sw $t2, 256($t0)
 		sw $t2, 260($t0)
 		
-		addi $t0, $t0, 24
+		addi $t0, $t0, 36
 		
 		li $t2, COL_RED
 		sw $t2, 0($t0)
@@ -224,31 +253,8 @@ main:
 		sw $t2, 256($t0)
 		sw $t2, 260($t0)
 		
-		addi $t0, $t0, 24
-		
-		li $t2, COL_RED
-		sw $t2, 0($t0)
-		sw $t2, 4($t0)
-		sw $t2, 256($t0)
-		sw $t2, 260($t0)
-		
-		addi $t0, $t0, 24
-		
-		li $t2, COL_RED
-		sw $t2, 0($t0)
-		sw $t2, 4($t0)
-		sw $t2, 256($t0)
-		sw $t2, 260($t0)
-		
-		addi $t0, $t0, 24
-		
-		li $t2, COL_RED
-		sw $t2, 0($t0)
-		sw $t2, 4($t0)
-		sw $t2, 256($t0)
-		sw $t2, 260($t0)
-		
-		addi $t0, $t0, 24
+		addi $t0, $t0, 36
+
 		
 		#finish point
 		li $t2, COL_YEL
@@ -599,7 +605,7 @@ w:		#jump
 		sw $t2, 12($s0)
 		
 		li $v0, 32
-		li $a0, 40
+		li $a0, 100
 		syscall
 		
 		li $t2, COL_BLA
