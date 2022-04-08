@@ -54,12 +54,12 @@
 # Link to video demonstration for final submission:
 # - (insert YouTube / MyMedia / other URL here). Make sure we can view it! #
 #
-#
+# https://youtu.be/2u0ieMLfdA4
 #
 #
 # Are you OK with us sharing the video with people outside course staff?
 # - yes / no / yes, and please share this project github link as well! #
-#
+# -> no
 #
 #
 #
