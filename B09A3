@@ -1,24 +1,32 @@
 #include "byos.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <fcntl.h>
+#include <stdlib.h>
 
 
 
 
 int interp(const struct cmd *c) {
-    int std_dir;
     
+    int std_dir;
+    int new_dir;
+    int ret_val = 0;
+    //int ret_val;
     // if there is redirection : change the stdout
+
     if (c -> redir_stdout != NULL) {
-        int new_dir = open(c -> redir_stdout, O_WRONLY|O_CREAT, 0666);
+        new_dir = open(c -> redir_stdout, O_WRONLY|O_CREAT, 0666);
         if(new_dir == -1) {
+            perror("Error");
             return 1;
         }
+        
         std_dir = dup(STDOUT_FILENO);
         dup2(new_dir, STDOUT_FILENO);
         close(new_dir);
@@ -45,16 +53,16 @@ int interp(const struct cmd *c) {
         } else if (pid == 0) {
             //child
             if(strchr(path, '/') == NULL || strstr(path, "./") != NULL) {
-                //printf("path - %s\n", path);
-                if(execv(path, argv) < 0) {
-                    perror("Error");
-                    return 0;
+                if(execvp(path, argv) < 0) {
+                    //printf("path vp ; - %s\n", path);
+                    write(STDOUT_FILENO, "Error", strlen("Error"));
+                    exit(127);
                 }
             } else {
-                if (execvp(path, argv) < 0) { // The smallest i such that argv[i]==NULL marks the end. how????
+                if (execv(path, argv) < 0) { // The smallest i such that argv[i]==NULL marks the end. how????
                     //printf("path = %s\n", path);
-                    perror("Error");
-                    return 127;
+                     write(STDOUT_FILENO, "Error", strlen("Error"));
+                    exit(127);
 
             }
         }
@@ -66,11 +74,13 @@ int interp(const struct cmd *c) {
             wait(&status);
             if(WIFEXITED(status)) {
                 //If the child exits, the return value is the child’s exit status.
-                return WEXITSTATUS(status);
+                ret_val = WEXITSTATUS(status);
+                return ret_val;
             }
             else if (WIFSIGNALED(status)) {
                 //If the child is killed by signal, the return value is 128+signal
-                return 128 + WTERMSIG(status);
+                ret_val = 128 + WTERMSIG(status);
+                return ret_val;
             }
         }
 
@@ -83,22 +93,25 @@ int interp(const struct cmd *c) {
 
 
         for(int i = 0; i < n; i++) {
-            printf("type = %d\n", cmds[i].type);
+            //printf("type = %d\n", cmds[i].type);
+            
             int ret = interp(&(cmds[i]));
             if(ret == 128 + SIGINT) {
                 
-                return (128 + SIGINT);
+                ret_val = (128 + SIGINT);
+                break;
             }
         }
     }
-
+    
     //restore std_out
     if (c -> redir_stdout != NULL) {
+        //printf(" type = %d\n", c -> type);
         dup2(std_dir, 1);
         close(std_dir);
     }
     
-    return 0;
+    return ret_val;
 
 }
 
