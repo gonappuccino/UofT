@@ -1,24 +1,84 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-    <title>HTML</title>
-    <meta charset="utf-8">
-</head>
-
-<body>
-    <h1><a href="index.html">MAIN</a></h1>
-    <ol>
-        <li><a href="1.html">HTML</a></li>
-        <li><a href="2.html">CSS</a></li>
-        <li><a href="3.html">JS</a></li>
-    </ol>
-    <h2>HTML</h2>
-    <p><a href="https://www.w3.org/"
-    target="_blank" title="html5 spec">
-    Hypertext Markup Language(HTML)</a> is the 
-    standard markup language for creating web page.
-    </p>
-
-
-</body>
+    <head>
+        <meta charset="utf-8">
+        <title>
+            Aaron
+        </title>
+        <style>
+            li, p, h1, h2, a {   
+                font-family: Georgia, "Times New Roman", serif;
+                text-decoration: none;
+                color: black;
+                padding: 15px;
+                margin: 0px;
+            }
+            body {
+                margin: 0px;
+            }
+            h1 {
+                font-size: 50px;
+                text-align: center;
+                border-bottom: gray 1px solid;
+                margin: 0px;
+                padding: 45px;
+            }
+            /*tag*/
+            a {
+                color: gray;
+            }
+            #grid ul {
+                border-right: 1px solid gray;
+                text-align: center;
+                list-style: none;
+                width: 250px;
+                padding: 10px;
+                margin: 0px;
+            }
+            /*class*/
+            .saw {
+                color: black;
+            }
+            /*id*/
+            #active {
+                color: red;
+            }
+            #grid {
+                display: grid;
+                grid-template-columns: 285px 1fr;
+            }
+            @media(max-width: 650px) {
+                #grid {
+                display: block;
+                }
+                #grid ul {
+                border-right: none;
+                }
+                #nav {
+                    border-bottom: 1px black solid;
+                }
+                #article {
+                    margin-left: 58px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <h1><a href="main.html" class="saw">Aaron</a></h1>
+        <div id="grid">
+            <div id="nav">
+                <ul>
+                    <li><a href="1.html" title="LIFE" id="active">生 - LIFE</a></li>
+                    <li><a href="2.html" title="CAREER" class="saw">經歷 - CAREER</a></li>
+                    <li><a href="3.html" title="CONTACT" class="saw">沟通 - CONTACT</a></li>
+                </ul>
+            </div>
+            <div id="article">
+                <h2>生 - LIFE</h2>
+                <p>
+                    DOB: 2000.11.21
+                </p>
+            </div>
+        </div>
+    </body>
 </html>
