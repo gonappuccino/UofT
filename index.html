@@ -6,6 +6,7 @@
             Aaron
         </title>
         <style>
+            /* li는 selector, 그 안은 declaration, color는 property, Value는 red */
             li, p, h1, h2, a {   
                 font-family: Georgia, "Times New Roman", serif;
                 text-decoration: none;
@@ -64,24 +65,17 @@
         </style>
     </head>
     <body>
-        <h1><a href="index.html" class="saw">Aaron</a></h1>
+        <h1><a href="index.html" id="active">Aaron</a></h1>
         <div id="grid">
             <div id="nav">
                 <ul>
                     <li><a href="1.html" title="LIFE" class="saw">生 - LIFE</a></li>
                     <li><a href="2.html" title="CAREER" class="saw">經歷 - CAREER</a></li>
-                    <li><a href="3.html" title="CONTACT" id="active">沟通 - CONTACT</a></li>
+                    <li><a href="3.html" title="CONTACT" class="saw">沟通 - CONTACT</a></li>
                 </ul>
             </div>
             <div id="article">
-                <h2>沟通 - CONTACT</h2>
-                <p>
-                    Seoul, South Korea, Earth
-                    <br>
-                    gonappuccino@gmail.com
-                    <br>
-                    +82 10.7356.5606
-                </p>
+                <h2>Hi there :)</h2>
             </div>
         </div>
     </body>
